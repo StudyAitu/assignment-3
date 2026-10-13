@@ -1,41 +1,31 @@
 package mst;
-
 import dsu.DisjointSet;
 import graph.Edge;
 import graph.Graph;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Kruskal {
-    private double totalWeight;
-    private List<Edge> mstEdges;
+    private final double totalWeight;
+    private final List<Edge> mstEdges = new ArrayList<>();
     private long operationsCount;
-
     public Kruskal(Graph graph) {
-        mstEdges = new ArrayList<>();
-        totalWeight = 0;
-        operationsCount = 0;
-
-        List<Edge> allEdges = new ArrayList<>(graph.getEdges());
-        Collections.sort(allEdges);
-        operationsCount += (long)(allEdges.size() * Math.log(allEdges.size())); // Sorting ops estimate
-
+        if (graph.isDirected()) throw new IllegalArgumentException("MST requires an undirected graph");
+        List<Edge> sorted = new ArrayList<>(graph.getEdges());
+        Collections.sort(sorted);
+        operationsCount += sorted.size(); // Number of edges supplied to sorting; not a comparison count.
         DisjointSet dsu = new DisjointSet(graph.getVertices());
-
-        for (Edge edge : allEdges) {
-            operationsCount++; // Edge examination
-            if (dsu.union(edge.getU(), edge.getV())) {
-                mstEdges.add(edge);
-                totalWeight += edge.getWeight();
+        double weight = 0;
+        for (Edge e : sorted) {
+            operationsCount++;
+            if (dsu.union(e.getU(), e.getV())) {
+                mstEdges.add(e); weight += e.getWeight();
                 if (mstEdges.size() == graph.getVertices() - 1) break;
             }
         }
-        operationsCount += dsu.getOperationsCount();
+        operationsCount += dsu.getOperationsCount(); totalWeight = weight;
     }
-
     public double getTotalWeight() { return totalWeight; }
-    public List<Edge> getMstEdges() { return mstEdges; }
+    public List<Edge> getMstEdges() { return Collections.unmodifiableList(mstEdges); }
     public long getOperationsCount() { return operationsCount; }
+    public boolean isSpanningTree(int vertices) { return vertices == 0 || mstEdges.size() == vertices - 1; }
 }

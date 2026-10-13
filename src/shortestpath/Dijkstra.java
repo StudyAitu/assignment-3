@@ -1,65 +1,37 @@
 package shortestpath;
-
 import graph.Edge;
 import graph.Graph;
-
 import java.util.*;
 
 public class Dijkstra {
-    private double[] distances;
-    private int[] parent;
+    private final double[] distances;
+    private final int[] parent;
     private long operationsCount;
-
     public Dijkstra(Graph graph, int source) {
-        int V = graph.getVertices();
-        distances = new double[V];
-        parent = new int[V];
-        Arrays.fill(distances, Double.MAX_VALUE);
-        Arrays.fill(parent, -1);
-        distances[source] = 0;
-        operationsCount = 0;
-
-        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingDouble(n -> n.distance));
-        pq.add(new Node(source, 0));
-
-        boolean[] visited = new boolean[V];
-
+        int n = graph.getVertices();
+        if (source < 0 || source >= n) throw new IllegalArgumentException("Source vertex is outside the graph");
+        for (Edge e : graph.getEdges()) if (e.getWeight() < 0) throw new IllegalArgumentException("Dijkstra does not support negative edge weights");
+        distances = new double[n]; parent = new int[n]; Arrays.fill(distances, Double.POSITIVE_INFINITY); Arrays.fill(parent, -1); distances[source] = 0;
+        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingDouble(a -> a.distance)); pq.add(new Node(source, 0));
+        boolean[] settled = new boolean[n];
         while (!pq.isEmpty()) {
-            Node current = pq.poll();
-            operationsCount++;
-            int u = current.vertex;
-
-            if (visited[u]) continue;
-            visited[u] = true;
-
-            for (Edge edge : graph.getAdjacencyList(u)) {
-                operationsCount++;
-                int v = edge.getV();
-                double weight = edge.getWeight();
-
-                if (weight < 0) {
-                    throw new IllegalArgumentException("Dijkstra does not support negative edge weights!");
-                }
-
-                if (!visited[v] && distances[u] + weight < distances[v]) {
-                    distances[v] = distances[u] + weight;
-                    parent[v] = u;
-                    pq.add(new Node(v, distances[v]));
-                    operationsCount++;
-                }
+            Node cur = pq.poll(); operationsCount++;
+            int u = cur.vertex; if (settled[u]) continue; settled[u] = true;
+            if (cur.distance > distances[u]) continue;
+            for (Edge e : graph.getAdjacencyList(u)) {
+                operationsCount++; int v = e.getV(); double candidate = distances[u] + e.getWeight();
+                if (!settled[v] && candidate < distances[v]) { distances[v] = candidate; parent[v] = u; pq.add(new Node(v, candidate)); operationsCount++; }
             }
         }
     }
-
-    public double[] getDistances() { return distances; }
+    public double[] getDistances() { return distances.clone(); }
     public long getOperationsCount() { return operationsCount; }
-
-    private static class Node {
-        int vertex;
-        double distance;
-        Node(int vertex, double distance) {
-            this.vertex = vertex;
-            this.distance = distance;
-        }
+    public List<Integer> getPathTo(int target) {
+        if (target < 0 || target >= distances.length) throw new IndexOutOfBoundsException("Invalid target: " + target);
+        if (Double.isInfinite(distances[target])) return Collections.emptyList();
+        LinkedList<Integer> path = new LinkedList<>();
+        for (int v = target; v != -1; v = parent[v]) path.addFirst(v);
+        return Collections.unmodifiableList(path);
     }
+    private static final class Node { final int vertex; final double distance; Node(int v, double d) { vertex=v; distance=d; } }
 }

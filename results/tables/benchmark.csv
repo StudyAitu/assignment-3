@@ -1,0 +1,16 @@
+size,vertices,edges,algorithm,avg_time_ns,avg_operations,result,graph_type
+Small,10,30,Kruskal,175695,145,"weight=173.561; MST verified",undirected_connected
+Small,10,30,Prim,193706,102,"weight=173.561; MST verified",undirected_connected
+Small,10,30,TopologicalSort,153446,70,"DAG order size=10",directed_DAG
+Small,10,30,KosarajuSCC,186799,120,"components=1; vertices verified",directed_general
+Small,10,30,Dijkstra,574998,91,"source=0; reachable=10",undirected_nonnegative
+Medium,100,500,Kruskal,488909,2190,"weight=1454.840; MST verified",undirected_connected
+Medium,100,500,Prim,465352,1782,"weight=1454.840; MST verified",undirected_connected
+Medium,100,500,TopologicalSort,247132,1100,"DAG order size=100",directed_DAG
+Medium,100,500,KosarajuSCC,385328,1800,"components=1; vertices verified",directed_general
+Medium,100,500,Dijkstra,404444,1401,"source=0; reachable=100",undirected_nonnegative
+Large,1000,5000,Kruskal,2839625,23681,"weight=12707.435; MST verified",undirected_connected
+Large,1000,5000,Prim,3053951,18179,"weight=12707.435; MST verified",undirected_connected
+Large,1000,5000,TopologicalSort,1870455,11000,"DAG order size=1000",directed_DAG
+Large,1000,5000,KosarajuSCC,1955584,18000,"components=14; vertices verified",directed_general
+Large,1000,5000,Dijkstra,2090954,13825,"source=0; reachable=1000",undirected_nonnegative
