@@ -1,0 +1,7 @@
+Size,Algorithm,AvgTimeNs,AvgOps,Weight
+Small,Kruskal,127466,197,228.30
+Small,Prim,86333,101,228.30
+Medium,Kruskal,244224,4818,1406.59
+Medium,Prim,209133,1783,1406.59
+Large,Kruskal,1331508,61972,12611.21
+Large,Prim,1395200,18304,12611.21
